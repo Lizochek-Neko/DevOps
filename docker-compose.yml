@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+  backend:
+    build: ./backend
+    image: lizochek-neko/backend:2.0      # п. 4.1
+    volumes:
+      - ./backend/data.txt:/app/data.txt  # п. 4.2 — data.txt у вас в папке backend
+    networks:
+      - internal
+    restart: always                       # п. 4.5
+
+  frontend:
+    build: ./frontend
+    image: lizochek-neko/frontend:2.0
+    depends_on:
+      - backend
+    networks:
+      - internal
+    ports:
+      - "8080:8080"
+    restart: always
+
+networks:
+  internal:                               # п. 4.3 — общая сеть без проброса наружу
+    driver: bridge
