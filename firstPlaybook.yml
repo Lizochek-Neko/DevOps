@@ -1,0 +1,24 @@
+---
+- name: Развёртывание приложения на node1
+  hosts: node1
+  gather_facts: false
+
+  tasks:
+    - name: Каталог для приложения
+      file:
+        path: /home/eliza/devops-app
+        state: directory
+        mode: "0755"
+
+    - name: Копируем docker-compose.yml на ноду
+      copy:
+        src: docker-compose.yml
+        dest: /home/eliza/devops-app/docker-compose.yml
+
+    - name: Deploy — подтягиваем образы и пересоздаём контейнеры
+      tags: deploy
+      command: docker compose -p devops -f /home/eliza/devops-app/docker-compose.yml up -d --pull always
+
+    - name: Start — поднимаем контейнеры из уже скачанных образов
+      tags: start
+      command: docker compose -p devops -f /home/eliza/devops-app/docker-compose.yml up -d
