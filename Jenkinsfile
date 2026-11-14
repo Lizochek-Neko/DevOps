@@ -2,18 +2,28 @@ pipeline {
     agent any
 
     environment {
-        ANSIBLE_CONFIG = "${WORKSPACE}/ansible.cfg"
+        ANSIBLE_HOST_KEY_CHECKING = 'False'
     }
 
     stages {
-        stage('Deploy') {
+        stage('Подготовка окружения') {
             steps {
-                sh 'ansible-playbook firstPlaybook.yml --tags deploy'
+                ansiblePlaybook(
+                    playbook: 'firstPlaybook.yml',
+                    inventory: 'jenkins_inventory.ini',
+                    tags: 'deploy',
+                    credentialsId: 'node1-ssh-key'
+                )
             }
         }
-        stage('Start') {
+        stage('Запуск приложений') {
             steps {
-                sh 'ansible-playbook firstPlaybook.yml --tags start'
+                ansiblePlaybook(
+                    playbook: 'firstPlaybook.yml',
+                    inventory: 'jenkins_inventory.ini',
+                    tags: 'start',
+                    credentialsId: 'node1-ssh-key'
+                )
             }
         }
     }
