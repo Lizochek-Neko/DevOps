@@ -1,0 +1,1 @@
+node1 ansible_host=172.27.112.1 ansible_port=2222 ansible_user=eliza ansible_ssh_private_key_file=~/.ssh/id_ed25519
