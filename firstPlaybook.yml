@@ -4,21 +4,30 @@
   gather_facts: false
 
   tasks:
-    - name: Каталог для приложения
+    - name: Каталоги для приложения
+      tags: always
       file:
-        path: /home/eliza/devops-app
+        path: /home/eliza/devops-app/backend
         state: directory
         mode: "0755"
 
+    - name: Пустой data.txt, если его нет
+      tags: always
+      file:
+        path: /home/eliza/devops-app/backend/data.txt
+        state: touch
+        mode: "0644"
+
     - name: Копируем docker-compose.yml на ноду
+      tags: always
       copy:
         src: docker-compose.yml
         dest: /home/eliza/devops-app/docker-compose.yml
 
-    - name: Deploy — подтягиваем образы и пересоздаём контейнеры
+    - name: Deploy — пересоздаём контейнеры из образов
       tags: deploy
-      command: docker compose -p devops -f /home/eliza/devops-app/docker-compose.yml up -d --pull always
+      command: docker compose -p devops -f /home/eliza/devops-app/docker-compose.yml up -d
 
-    - name: Start — поднимаем контейнеры из уже скачанных образов
+    - name: Start — поднимаем контейнеры
       tags: start
       command: docker compose -p devops -f /home/eliza/devops-app/docker-compose.yml up -d
